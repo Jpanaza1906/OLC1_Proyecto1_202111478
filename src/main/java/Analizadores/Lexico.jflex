@@ -35,21 +35,20 @@ BLANCOS = [ \r\t]+
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 comentariosimple = "//" {InputCharacter}* {LineTerminator}?
-multicomentario = "<!" ({InputCharacter}*|{LineTerminator}*)* "!>"
+multicomentario = "<!" [^"!>"]* "!>"
 titulo = [[A-Z]|[a-z]|[0-9]]+
 rangomayus = [A-Z] ("~"|"-") [A-Z]
 rangominus = [a-z] ("~"|"-") [a-z]
 sletras = (([A-Z]|[a-z])(","))(([A-Z]|[a-z])(",")?)*
 snums = ([0-9](","))([0-9](",")?)*
 rangonum = [0-9] ("~"|"-") [0-9]
-char = ("!"|"\""|"#"|"$"|"%"|"&"|"'"|"("|")"|"*"|"+"|","|"-"|"."|"/"|":"|";"|"<"|"="|">"|"?"|"@"|"["|"\\"|"]"|"^"|"_"|"`"|"{"|"|"|"}"|"~")
+char = ("\""|"#"|"$"|"%"|"&"|"'"|"("|")"|"*"|"+"|","|"-"|"."|"/"|":"|";"|"="|">"|"?"|"@"|"["|"\\"|"]"|"^"|"_"|"`"|"{"|"|"|"}"|"~")
 rangochar = {char} ("~"|"-") {char}
 schar = {char}(",")({char}(",")?)*
 
 %%
 /* 3. Reglas Semanticas */
 //Palabras y simbolos reservados
-
 "CONJ" { System.out.println("Reconocio \""+yytext()+"\" : nuevo conjunto"); return new Symbol(sym.CONJUNTO,yyline,yychar,yytext());}
 "-" { System.out.println("Reconocio \""+yytext()+"\" : guion"); return new Symbol(sym.GUION,yyline,yychar,yytext());} 
 "~" { System.out.println("Reconocio \""+yytext()+"\" : rango letras"); return new Symbol(sym.RANGO,yyline,yychar,yytext());} 
@@ -78,9 +77,9 @@ schar = {char}(",")({char}(",")?)*
 
 //Expresiones definidas
 
-{BLANCOS} {} 
-{comentariosimple} {}
-{multicomentario} {}
+{BLANCOS} {/*ignore*/} 
+{comentariosimple} {/*ignore*/}
+{multicomentario} {/*ignore*/}
 {titulo} {System.out.println("Reconocio titulo: "+yytext()); return new Symbol(sym.TITULO,yyline,yychar, yytext());}
 {rangomayus} {System.out.println("Reconocio rango letras mayusculas: "+yytext()); return new Symbol(sym.RANGO_MAYUS,yyline,yychar, yytext());}
 {rangominus} {System.out.println("Reconocio rango letras minusculas: "+yytext()); return new Symbol(sym.RANGO_MINUS,yyline,yychar, yytext());}

@@ -257,9 +257,16 @@ public class NewJFrame extends javax.swing.JFrame {
             Sintactico sintactico = new Sintactico(new Lexico(new BufferedReader(new StringReader(jTextArea1.getText()))));
             sintactico.parse();
             var listaconjuntos = sintactico.conj;
-
+            var listaexpresiones = sintactico.expr;
+            var listaevaluaciones = sintactico.eval;
             for (int i = 0; i < listaconjuntos.size(); i++) {
                 System.out.println("CONJUNTO: " + listaconjuntos.get(i).titulo + " -> " + listaconjuntos.get(i).rango);
+            }
+            for (int i = 0; i < listaexpresiones.size(); i++) {
+                System.out.println("EXPRESION: " + listaexpresiones.get(i).titulo + " -> " + listaexpresiones.get(i).exp);
+            }
+            for (int i = 0; i < listaevaluaciones.size(); i++) {
+                System.out.println("EVALUACION: " + listaevaluaciones.get(i).titulo + " -> " + listaevaluaciones.get(i).eval);
             }
         } catch (Exception ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);

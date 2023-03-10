@@ -42,3 +42,12 @@ expresion ::=
 ;
 
 TESTER ::= TITULO:t DOSPT COMILLA_D eval COMILLA_D PTCOMA
+
+BODY ::=  DEFCONJ BODY
+        | DEFCONJ
+        | DEFER BODY
+        | DEFER 
+        | PORCEN PORCEN BODY
+        | TESTER BODY
+        | TESTER
+;

@@ -27,10 +27,20 @@ parser code
             this.titulo = titulo;
             this.exp = exp;
         }
+    }
+    public class Evaluar {
+        public String titulo;
+        public String eval;
+
+        public Evaluar(String titulo, String eval){
+            this.titulo = titulo;
+            this.eval = eval;
+        }
     } 
     public static String xs = "";
     public List<Conjunto> conj = new ArrayList<Conjunto>();
     public List<Expresion> expr = new ArrayList<Expresion>();
+    public List<Evaluar> eval = new ArrayList<Evaluar>();
 :} 
 
 /* 3. Terminales */
@@ -38,7 +48,6 @@ terminal String CONJUNTO;
 terminal String GUION, RANGO, MAYORQ, PTCOMA, COMA,DOSPT, PAR_A, PAR_C, COR_A, COR_C, LLAVE_A, LLAVE_C, PORCEN, COMILLA_S, COMILLA_D;
 terminal String CONCAT, OR, CERO_MAS, UNO_MAS, CERO_UNO;
 terminal String TITULO, RANGO_MAYUS, RANGO_MINUS, SLETRAS, SNUMS, RANGO_NUM, RANGO_CHAR, SCHAR, CHAR;
-
 /* 4. No Terminales */
 non terminal ini;
 non terminal BODY;
@@ -48,6 +57,7 @@ non terminal TESTER;
 
 non terminal String rango;
 non terminal String expresion;
+non terminal String evaluar;
 /* 5. Precedencias */
 
 /* 6. Producciones */
@@ -58,10 +68,13 @@ ini ::= LLAVE_A BODY LLAVE_C {: System.out.println("Ya salio");:};
 BODY ::=  DEFCONJ BODY
         | DEFCONJ
         | DEFER BODY
-        | DEFER
+        | DEFER 
+        | PORCEN PORCEN BODY
+        | TESTER BODY
+        | TESTER
 ;
 
-DEFCONJ ::= CONJUNTO DOSPT TITULO:t GUION MAYORQ rango:r PTCOMA
+DEFCONJ ::= CONJUNTO DOSPT TITULO:t GUION MAYORQ rango:r PTCOMA 
     {:
         Conjunto c = new Conjunto(t,r);
         conj.add(c);
@@ -81,9 +94,8 @@ rango ::=
 DEFER ::= TITULO:t GUION MAYORQ expresion
     {:
         Expresion x = new Expresion(t,xs);
-        System.out.println(xs);
-        xs = "0";
         expr.add(x);
+        xs = "";
     :}
 ;
 expresion ::= 
@@ -104,9 +116,38 @@ expresion ::=
         | PAR_C:r expresion       {:xs = r + xs;:}
         | COR_A:r expresion       {:xs = r + xs;:}
         | COR_C:r expresion       {:xs = r + xs;:}
-        | PORCENE:r expresion     {:xs = r + xs;:}
+        | PORCEN:r expresion     {:xs = r + xs;:}
         | TITULO:r expresion      {:xs = r + xs;:}
         | CHAR:r expresion        {:xs = r + xs;:}  
         | PTCOMA
 ;
 
+TESTER ::= TITULO:t DOSPT COMILLA_D evaluar PTCOMA
+    {:
+        Evaluar x = new Evaluar(t,xs);
+        eval.add(x);
+        xs = "";
+    :}
+;
+evaluar ::= 
+         CONCAT:r evaluar       {:xs = r + xs;:} 
+        | OR:r evaluar          {:xs = r + xs;:}   
+        | CERO_MAS:r evaluar    {:xs = r + xs;:}   
+        | UNO_MAS:r evaluar     {:xs = r + xs;:}   
+        | CERO_UNO:r evaluar    {:xs = r + xs;:}   
+        | LLAVE_A:r evaluar     {:xs = r + xs;:}   
+        | LLAVE_C:r evaluar     {:xs = r + xs;:} 
+        | COMILLA_S:r evaluar   {:xs = r + xs;:}
+        | GUION:r evaluar       {:xs = r + xs;:}
+        | RANGO:r evaluar       {:xs = r + xs;:}
+        | MAYORQ:r evaluar      {:xs = r + xs;:}
+        | COMA:r evaluar        {:xs = r + xs;:}
+        | PAR_A:r evaluar       {:xs = r + xs;:}
+        | PAR_C:r evaluar       {:xs = r + xs;:}
+        | COR_A:r evaluar       {:xs = r + xs;:}
+        | COR_C:r evaluar       {:xs = r + xs;:}
+        | PORCEN:r evaluar      {:xs = r + xs;:}
+        | TITULO:r evaluar      {:xs = r + xs;:}
+        | CHAR:r evaluar        {:xs = r + xs;:}    
+        | COMILLA_D:r           
+;
