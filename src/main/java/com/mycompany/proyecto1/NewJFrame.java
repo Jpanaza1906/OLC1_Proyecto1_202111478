@@ -15,6 +15,7 @@ import Analizadores.Sintactico;
 import Analizadores.Lexico;
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -31,6 +32,12 @@ public class NewJFrame extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame
      */
+    /* VARIABLES GLOBALES */
+    public Sintactico.Conjunto[] listaconjuntos;
+    public Sintactico.Expresion[] listaexpresiones;
+    public Sintactico.Evaluar[] listaevaluaciones;
+
+    /* ------------------ */
     public NewJFrame() {
         initComponents();
         jLabel2.setText("");
@@ -254,26 +261,144 @@ public class NewJFrame extends javax.swing.JFrame {
         jButton5.setEnabled(true);
         jTextArea2.setText("");
         try {
-            Sintactico sintactico = new Sintactico(new Lexico(new BufferedReader(new StringReader(jTextArea1.getText()))));
+            Sintactico sintactico = new Sintactico(
+                    new Lexico(new BufferedReader(new StringReader(jTextArea1.getText()))));
             sintactico.parse();
-            var listaconjuntos = sintactico.conj;
-            var listaexpresiones = sintactico.expr;
-            var listaevaluaciones = sintactico.eval;
-            for (int i = 0; i < listaconjuntos.size(); i++) {
-                System.out.println("CONJUNTO: " + listaconjuntos.get(i).titulo + " -> " + listaconjuntos.get(i).rango);
+            // CONVERTIR LAS LISTAS A ARRAYS PARA EL MANEJOR
+            listaconjuntos = new Sintactico.Conjunto[sintactico.conj.size()];
+            listaexpresiones = new Sintactico.Expresion[sintactico.expr.size()];
+            listaevaluaciones = new Sintactico.Evaluar[sintactico.eval.size()];
+
+            // PASAR CONJUNTOS
+            for (int i = 0; i < listaconjuntos.length; i++) {
+                listaconjuntos[i] = sintactico.conj.get(i);
             }
-            for (int i = 0; i < listaexpresiones.size(); i++) {
-                System.out.println("EXPRESION: " + listaexpresiones.get(i).titulo + " -> " + listaexpresiones.get(i).exp);
+            // PASAR EXPRESIONES
+            for (int i = 0; i < listaexpresiones.length; i++) {
+                listaexpresiones[i] = sintactico.expr.get(i);
             }
-            for (int i = 0; i < listaevaluaciones.size(); i++) {
-                System.out.println("EVALUACION: " + listaevaluaciones.get(i).titulo + " -> " + listaevaluaciones.get(i).eval);
+            // PASAR EVALUACIONES
+            for (int i = 0; i < listaevaluaciones.length; i++) {
+                listaevaluaciones[i] = sintactico.eval.get(i);
             }
+            // POSIBLES CONJUNTOS
+            String letrasmin = "abcdefghijklmnñopqrstuvwxyz";
+            String letrasmayus = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+            String chars = " !\"#$%&'()*+´-./:;<=>?@[\\]^_`{|}~";
+            String numeros = "0123456789";
+
+            for (int i = 0; i < listaconjuntos.length; i++) {
+                var rango = listaconjuntos[i].rango.trim();
+                var rarray = rango.toCharArray();
+                if (rango.length() == 3 && (rarray[1] == '-' || rarray[1] == '~')) {
+                    if (letrasmin.indexOf(rarray[0]) != -1 && letrasmin.indexOf(rarray[2]) != -1) {
+                        var limiteinf = letrasmin.indexOf(rarray[0]);
+                        var limitesup = letrasmin.indexOf(rarray[2]);
+                        String rangof = "";
+                        if (limitesup > limiteinf) {
+                            var lista = letrasmin.toCharArray();
+                            for (int j = 0; j < letrasmin.length(); j++) {
+                                if (j >= limiteinf && j <= limitesup) {
+                                    rangof = rangof + lista[j];
+                                }
+                            }
+                            listaconjuntos[i].rango = rangof;
+                        } else {
+                            listaconjuntos[i].rango = "-1";
+                            continue;
+                        }
+
+                    } else if (letrasmayus.indexOf(rarray[0]) != -1 && letrasmayus.indexOf(rarray[2]) != -1) {
+                        var limiteinf = letrasmayus.indexOf(rarray[0]);
+                        var limitesup = letrasmayus.indexOf(rarray[2]);
+                        String rangof = "";
+                        if (limitesup > limiteinf) {
+                            var lista = letrasmayus.toCharArray();
+                            for (int j = 0; j < letrasmayus.length(); j++) {
+                                if (j >= limiteinf && j <= limitesup) {
+                                    rangof = rangof + lista[j];
+                                }
+                            }
+                            listaconjuntos[i].rango = rangof;
+                        } else {
+                            listaconjuntos[i].rango = "-1";
+                            continue;
+                        }
+                    } else if (chars.indexOf(rarray[0]) != -1 && chars.indexOf(rarray[2]) != -1) {
+                        var limiteinf = chars.indexOf(rarray[0]);
+                        var limitesup = chars.indexOf(rarray[2]);
+                        String rangof = "";
+                        if (limitesup > limiteinf) {
+                            var lista = chars.toCharArray();
+                            for (int j = 0; j < chars.length(); j++) {
+                                if (j >= limiteinf && j <= limitesup) {
+                                    rangof = rangof + lista[j];
+                                }
+                            }
+                            listaconjuntos[i].rango = rangof;
+                        } else {
+                            listaconjuntos[i].rango = "-1";
+                            continue;
+                        }
+                    } else if (numeros.indexOf(rarray[0]) != -1 && numeros.indexOf(rarray[2]) != -1) {
+                        var limiteinf = numeros.indexOf(rarray[0]);
+                        var limitesup = numeros.indexOf(rarray[2]);
+                        String rangof = "";
+                        if (limitesup > limiteinf) {
+                            var lista = numeros.toCharArray();
+                            for (int j = 0; j < numeros.length(); j++) {
+                                if (j >= limiteinf && j <= limitesup) {
+                                    rangof = rangof + lista[j];
+                                }
+                            }
+                            listaconjuntos[i].rango = rangof;
+                        } else {
+                            listaconjuntos[i].rango = "-1";
+                            continue;
+                        }
+                    } else {
+                        listaconjuntos[i].rango = "-1";
+                        continue;
+                    }
+                } else {
+                    var serie = rango.replaceAll(",", "");
+                    listaconjuntos[i].rango = serie;
+                }
+            }
+            mostrarlistas();
+            /*
+             * for (int i = 0; i < listaconjuntos.size(); i++) {
+             * System.out.println("CONJUNTO: " + listaconjuntos.get(i).titulo + " -> " +
+             * listaconjuntos.get(i).rango);
+             * }
+             * for (int i = 0; i < listaexpresiones.size(); i++) {
+             * System.out.println("EXPRESION: " + listaexpresiones.get(i).titulo + " -> " +
+             * listaexpresiones.get(i).exp);
+             * }
+             * for (int i = 0; i < listaevaluaciones.size(); i++) {
+             * System.out.println("EVALUACION: " + listaevaluaciones.get(i).titulo + " -> "
+             * + listaevaluaciones.get(i).eval);
+             * }
+             */
         } catch (Exception ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error fatal en compilacion de entrada");
         }
     }//GEN-LAST:event_jButton4ActionPerformed
-    
+    private void mostrarlistas(){
+        System.out.println("----CONJUNTOS----");
+        for (int i = 0; i < listaconjuntos.length; i++) {
+            System.out.println(listaconjuntos[i].titulo + " -> " + listaconjuntos[i].rango);
+        }
+        System.out.println("----EXPRESIONES----");
+        for (int i = 0; i < listaexpresiones.length; i++) {
+            System.out.println(listaexpresiones[i].titulo + " -> " + listaexpresiones[i].exp);
+        }
+        System.out.println("----EVALUACIONES----");
+        for (int i = 0; i < listaevaluaciones.length; i++) {
+            System.out.println(listaevaluaciones[i].titulo + " -> " + listaevaluaciones[i].eval);
+        }
+    }
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // add your handling code here: ANALIZAR ENTRADA
         

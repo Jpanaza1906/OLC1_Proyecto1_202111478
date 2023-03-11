@@ -76,6 +76,7 @@ BODY ::=  DEFCONJ BODY
 
 DEFCONJ ::= CONJUNTO DOSPT TITULO:t GUION MAYORQ rango:r PTCOMA 
     {:
+        r = r.replaceAll(" ","");
         Conjunto c = new Conjunto(t,r);
         conj.add(c);
     :}
@@ -108,6 +109,7 @@ expresion ::=
         | LLAVE_C:r expresion     {:xs = r + xs;:}   
         | COMILLA_D:r expresion   {:xs = r + xs;:}
         | COMILLA_S:r expresion   {:xs = r + xs;:}
+        | DOSPT:r expresion       {:xs = r + xs;:}
         | GUION:r expresion       {:xs = r + xs;:}
         | RANGO:r expresion       {:xs = r + xs;:}
         | MAYORQ:r expresion      {:xs = r + xs;:}
@@ -138,6 +140,7 @@ evaluar ::=
         | LLAVE_A:r evaluar     {:xs = r + xs;:}   
         | LLAVE_C:r evaluar     {:xs = r + xs;:} 
         | COMILLA_S:r evaluar   {:xs = r + xs;:}
+        | DOSPT:r evaluar       {:xs = r + xs;:}
         | GUION:r evaluar       {:xs = r + xs;:}
         | RANGO:r evaluar       {:xs = r + xs;:}
         | MAYORQ:r evaluar      {:xs = r + xs;:}

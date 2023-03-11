@@ -34,17 +34,17 @@ import java_cup.runtime.Symbol;
 BLANCOS = [ \r\t]+
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
-comentariosimple = "//" {InputCharacter}* {LineTerminator}?
+comentariosimple = "//" {InputCharacter}* {LineTerminator}
 multicomentario = "<!" [^"!>"]* "!>"
 titulo = [[A-Z]|[a-z]|[0-9]]+
-rangomayus = [A-Z] ("~"|"-") [A-Z]
-rangominus = [a-z] ("~"|"-") [a-z]
-sletras = (([A-Z]|[a-z])(","))(([A-Z]|[a-z])(",")?)*
-snums = ([0-9](","))([0-9](",")?)*
-rangonum = [0-9] ("~"|"-") [0-9]
-char = ("\""|"#"|"$"|"%"|"&"|"'"|"("|")"|"*"|"+"|","|"-"|"."|"/"|":"|";"|"="|">"|"?"|"@"|"["|"\\"|"]"|"^"|"_"|"`"|"{"|"|"|"}"|"~")
-rangochar = {char} ("~"|"-") {char}
-schar = {char}(",")({char}(",")?)*
+rangomayus = [A-Z] {BLANCOS}* ("~"|"-") {BLANCOS}* [A-Z]
+rangominus = [a-z] {BLANCOS}* ("~"|"-") {BLANCOS}* [a-z]
+sletras = (([A-Z]|[a-z]){BLANCOS}*(","){BLANCOS}*)(([A-Z]|[a-z]){BLANCOS}*(",")?{BLANCOS}*)*
+snums = ([0-9]{BLANCOS}*(","){BLANCOS}*)([0-9]{BLANCOS}*(",")?{BLANCOS}*)*
+rangonum = [0-9]{BLANCOS}* ("~"|"-"){BLANCOS}* [0-9]
+char = ("\""|"#"|"$"|"%"|"&"|"'"|"("|")"|"*"|"+"|","|"-"|"."|"/"|":"|"="|"?"|"@"|"["|"\\"|"]"|"^"|"_"|"`"|"{"|"|"|"}"|"~"|"!"|"<")
+rangochar = {char}{BLANCOS}* ("~"|"-") {BLANCOS}*{char}
+schar = {char}{BLANCOS}*(","){BLANCOS}*({char}(",")?{BLANCOS}*)*
 
 %%
 /* 3. Reglas Semanticas */
@@ -65,6 +65,7 @@ schar = {char}(",")({char}(",")?)*
 "%" { System.out.println("Reconocio \""+yytext()+"\" : porcentaje"); return new Symbol(sym.PORCEN,yyline,yychar, yytext());}
 "'" { System.out.println("Reconocio \""+yytext()+"\" : comilla simple"); return new Symbol(sym.COMILLA_S,yyline,yychar, yytext());} 
 "\"" { System.out.println("Reconocio \""+yytext()+"\" : comilla doble"); return new Symbol(sym.COMILLA_D,yyline,yychar, yytext());}
+
 
 // Operadores notacion
 "." {System.out.println("Reconocio \""+yytext()+"\" : CONCATENACION"); return new Symbol(sym.CONCAT,yyline,yychar, yytext());} 

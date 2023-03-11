@@ -51,3 +51,16 @@ BODY ::=  DEFCONJ BODY
         | TESTER BODY
         | TESTER
 ;
+
+ CONJUNTO: numero -> 0,1,2,3,4,5,6,7,8,9
+ CONJUNTO: minuscula -> a~z
+ CONJUNTO: mayuscula -> A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z
+ CONJUNTO: simbolos -> -,_
+ EXPRESION: correoElectronico -> .|{minuscula}{mayuscula}.+|||{simbolos}{minuscula}{mayuscula}{numero}."@".+|{minuscula}{mayuscula}."."."c"."o""m"
+ EXPRESION: url -> ."h"."t"."t"."p".?"s".":"."/"."/".+{minuscula}."."+{minuscula}
+ EVALUACION: url -> https://facebook.com
+ EVALUACION: url -> http://google.es
+ EVALUACION: url -> https://compiladores-1.com
+ EVALUACION: correoElectronico -> lachalana666@ingusac.com
+ EVALUACION: correoElectronico -> micorreo_123@gMAIL.com
+ EVALUACION: correoElectronico -> compiladores1.lab@hotMAIL.es
