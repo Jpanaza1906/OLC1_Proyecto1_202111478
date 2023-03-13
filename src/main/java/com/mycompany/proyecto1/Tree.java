@@ -10,7 +10,7 @@ public class Tree {
     node root;
     public Tree(String er, ArrayList<node> leaves, ArrayList<ArrayList> table){
         numLeave numHoja =  new numLeave(er);
-        Stack<node> pila = new Stack<>();
+        Stack<node> pila = new Stack();
 
         String[] erSplit = er.split(",");
 
@@ -39,13 +39,13 @@ public class Tree {
                     pila.push(ncom);
                     break;
                 case "+":
-                    node unario2 = (node) pila.pop();
-                    node nuom = new node(character, Types.UNO_MAS, 0, unario2, null, leaves, table);
+                    node unario1 = (node) pila.pop();
+                    node nuom = new node(character, Types.UNO_MAS, 0, unario1, null, leaves, table);
                     pila.push(nuom);
                     break;
                 case "?":
-                    node unario3 = (node) pila.pop();
-                    node ncou = new node(character, Types.CERO_UNO, 0, unario3, null, leaves, table);
+                    node unario2 = (node) pila.pop();
+                    node ncou = new node(character, Types.CERO_UNO, 0, unario2, null, leaves, table);
                     pila.push(ncou);
                     break;
                 default:

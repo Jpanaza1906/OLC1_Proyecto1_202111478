@@ -281,6 +281,11 @@ public class NewJFrame extends javax.swing.JFrame {
             }
             expandirConjuntos();
             dividirExpresion();
+            for (int i = 0; i < listaexpresiones.length;i++){
+                if (!listaexpresiones[i].exp.equals("-1")){
+                    crearArboles(listaexpresiones[i].exp);
+                }
+            }
             mostrarlistas();
             
         } catch (Exception ex) {
@@ -419,7 +424,7 @@ public class NewJFrame extends javax.swing.JFrame {
                     nuevaexp = nuevaexp + arrayexp[j] + ",";
                 }
                 else if(divisores.indexOf(arrayexp[j]) != -1){
-                    if(divisores.indexOf(arrayexp[j-1]) == -1){
+                    if(divisores.indexOf(arrayexp[j-1]) == -1 && arrayexp[j-1] != '}' && arrayexp[j-1] != 'n' && arrayexp[j-1] != '\''){
                         nuevaexp = nuevaexp + "," + arrayexp[j] + ",";
                     }
                     else{
@@ -427,14 +432,56 @@ public class NewJFrame extends javax.swing.JFrame {
                     }
                 }
                 else if(arrayexp[j] == '}'){
-                    nuevaexp = nuevaexp + arrayexp[j] + ",";
+                    if((j+1) != arrayexp.length){
+                        nuevaexp = nuevaexp + ",";
+                    }
                 }
-                else{                    
-                    nuevaexp = nuevaexp + arrayexp[j];
+                else{           
+                    if(arrayexp[j] != '{'){      
+                        if(arrayexp[j] == '\"' && arrayexp[j-1] == '\"' && j != (arrayexp.length-1)){
+                            nuevaexp = nuevaexp + " " + ",";
+                        }
+                        else if(arrayexp[j] == '\"' && arrayexp[j-1] == '\"' && j == (arrayexp.length-1)){
+                            nuevaexp = nuevaexp + " ";
+                        }
+                        else if(arrayexp[j] == '\\' && (j+1) != (arrayexp.length-1)){
+                            nuevaexp = nuevaexp + arrayexp[j] + arrayexp[j+1] + ",";
+                            j = j + 1;
+                        }
+                        else if(arrayexp[j] == '\\' && (j+1) == (arrayexp.length-1)){
+                            nuevaexp = nuevaexp + arrayexp[j] + arrayexp[j+1];
+                            j = j + 1;
+                        }
+                        else{
+                            if(arrayexp[j] != '\"'){
+                                nuevaexp = nuevaexp + arrayexp[j];
+                            }
+                        }
+                    }
                 }
             }
             listaexpresiones[i].exp = nuevaexp;
         }
+    }
+    private void crearArboles(String er){
+        ArrayList<node> leaves = new ArrayList();
+        ArrayList<ArrayList> table = new ArrayList();
+        er = ".," + er + ",#";
+
+        Tree arbol = new Tree(er, leaves, table);
+        node raiz = arbol.getRoot();
+
+        raiz.getNode();
+        raiz.follow();
+        
+        System.out.println("******************************** TABLA SIGUIENTE ***********************************");
+        followTable ft = new followTable();
+        ft.printTable(table);
+        transitionTable tran = new transitionTable(raiz, table, leaves);
+        System.out.println("******************************** TABLA TRANSICIONES ***********************************");
+        tran.impTable();
+        System.out.println("******************************** GRAPHVIZ ***********************************");
+        tran.impGraph();
     }
     private void mostrarlistas(){
         System.out.println("----CONJUNTOS----");

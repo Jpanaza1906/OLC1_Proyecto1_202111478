@@ -65,6 +65,18 @@ public class node {
                     this.last.addAll(((node)rightNode).last);
                 }   
                 break;
+            case OR:
+                if(leftNode instanceof node && rightNode instanceof node){
+                    this.anullable = ((node)leftNode).anullable || ((node) rightNode).anullable;
+                    
+                    this.first.addAll(((node)leftNode).first);
+                    this.first.addAll(((node)rightNode).first);
+                    
+                    
+                    this.last.addAll(((node)leftNode).last);
+                    this.last.addAll(((node)rightNode).last);
+                }   
+                break;
             case CERO_MAS:
                 if(leftNode instanceof node){
                     this.anullable = true;
