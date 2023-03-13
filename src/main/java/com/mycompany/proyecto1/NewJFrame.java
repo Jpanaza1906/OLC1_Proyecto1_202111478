@@ -15,7 +15,7 @@ import Analizadores.Sintactico;
 import Analizadores.Lexico;
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -36,7 +36,6 @@ public class NewJFrame extends javax.swing.JFrame {
     public Sintactico.Conjunto[] listaconjuntos;
     public Sintactico.Expresion[] listaexpresiones;
     public Sintactico.Evaluar[] listaevaluaciones;
-
     /* ------------------ */
     public NewJFrame() {
         initComponents();
@@ -261,8 +260,7 @@ public class NewJFrame extends javax.swing.JFrame {
         jButton5.setEnabled(true);
         jTextArea2.setText("");
         try {
-            Sintactico sintactico = new Sintactico(
-                    new Lexico(new BufferedReader(new StringReader(jTextArea1.getText()))));
+            Sintactico sintactico = new Sintactico(new Lexico(new BufferedReader(new StringReader(jTextArea1.getText()))));
             sintactico.parse();
             // CONVERTIR LAS LISTAS A ARRAYS PARA EL MANEJOR
             listaconjuntos = new Sintactico.Conjunto[sintactico.conj.size()];
@@ -281,110 +279,163 @@ public class NewJFrame extends javax.swing.JFrame {
             for (int i = 0; i < listaevaluaciones.length; i++) {
                 listaevaluaciones[i] = sintactico.eval.get(i);
             }
-            // POSIBLES CONJUNTOS
-            String letrasmin = "abcdefghijklmnñopqrstuvwxyz";
-            String letrasmayus = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-            String chars = " !\"#$%&'()*+´-./:;<=>?@[\\]^_`{|}~";
-            String numeros = "0123456789";
-
-            for (int i = 0; i < listaconjuntos.length; i++) {
-                var rango = listaconjuntos[i].rango.trim();
-                var rarray = rango.toCharArray();
-                if (rango.length() == 3 && (rarray[1] == '-' || rarray[1] == '~')) {
-                    if (letrasmin.indexOf(rarray[0]) != -1 && letrasmin.indexOf(rarray[2]) != -1) {
-                        var limiteinf = letrasmin.indexOf(rarray[0]);
-                        var limitesup = letrasmin.indexOf(rarray[2]);
-                        String rangof = "";
-                        if (limitesup > limiteinf) {
-                            var lista = letrasmin.toCharArray();
-                            for (int j = 0; j < letrasmin.length(); j++) {
-                                if (j >= limiteinf && j <= limitesup) {
-                                    rangof = rangof + lista[j];
-                                }
-                            }
-                            listaconjuntos[i].rango = rangof;
-                        } else {
-                            listaconjuntos[i].rango = "-1";
-                            continue;
-                        }
-
-                    } else if (letrasmayus.indexOf(rarray[0]) != -1 && letrasmayus.indexOf(rarray[2]) != -1) {
-                        var limiteinf = letrasmayus.indexOf(rarray[0]);
-                        var limitesup = letrasmayus.indexOf(rarray[2]);
-                        String rangof = "";
-                        if (limitesup > limiteinf) {
-                            var lista = letrasmayus.toCharArray();
-                            for (int j = 0; j < letrasmayus.length(); j++) {
-                                if (j >= limiteinf && j <= limitesup) {
-                                    rangof = rangof + lista[j];
-                                }
-                            }
-                            listaconjuntos[i].rango = rangof;
-                        } else {
-                            listaconjuntos[i].rango = "-1";
-                            continue;
-                        }
-                    } else if (chars.indexOf(rarray[0]) != -1 && chars.indexOf(rarray[2]) != -1) {
-                        var limiteinf = chars.indexOf(rarray[0]);
-                        var limitesup = chars.indexOf(rarray[2]);
-                        String rangof = "";
-                        if (limitesup > limiteinf) {
-                            var lista = chars.toCharArray();
-                            for (int j = 0; j < chars.length(); j++) {
-                                if (j >= limiteinf && j <= limitesup) {
-                                    rangof = rangof + lista[j];
-                                }
-                            }
-                            listaconjuntos[i].rango = rangof;
-                        } else {
-                            listaconjuntos[i].rango = "-1";
-                            continue;
-                        }
-                    } else if (numeros.indexOf(rarray[0]) != -1 && numeros.indexOf(rarray[2]) != -1) {
-                        var limiteinf = numeros.indexOf(rarray[0]);
-                        var limitesup = numeros.indexOf(rarray[2]);
-                        String rangof = "";
-                        if (limitesup > limiteinf) {
-                            var lista = numeros.toCharArray();
-                            for (int j = 0; j < numeros.length(); j++) {
-                                if (j >= limiteinf && j <= limitesup) {
-                                    rangof = rangof + lista[j];
-                                }
-                            }
-                            listaconjuntos[i].rango = rangof;
-                        } else {
-                            listaconjuntos[i].rango = "-1";
-                            continue;
-                        }
-                    } else {
-                        listaconjuntos[i].rango = "-1";
-                        continue;
-                    }
-                } else {
-                    var serie = rango.replaceAll(",", "");
-                    listaconjuntos[i].rango = serie;
-                }
-            }
+            expandirConjuntos();
+            dividirExpresion();
             mostrarlistas();
-            /*
-             * for (int i = 0; i < listaconjuntos.size(); i++) {
-             * System.out.println("CONJUNTO: " + listaconjuntos.get(i).titulo + " -> " +
-             * listaconjuntos.get(i).rango);
-             * }
-             * for (int i = 0; i < listaexpresiones.size(); i++) {
-             * System.out.println("EXPRESION: " + listaexpresiones.get(i).titulo + " -> " +
-             * listaexpresiones.get(i).exp);
-             * }
-             * for (int i = 0; i < listaevaluaciones.size(); i++) {
-             * System.out.println("EVALUACION: " + listaevaluaciones.get(i).titulo + " -> "
-             * + listaevaluaciones.get(i).eval);
-             * }
-             */
+            
         } catch (Exception ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error fatal en compilacion de entrada");
         }
     }//GEN-LAST:event_jButton4ActionPerformed
+    private void expandirConjuntos(){
+        // POSIBLES CONJUNTOS       
+        String letrasmin = "abcdefghijklmnñopqrstuvwxyz";
+        String letrasmayus = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+        String chars = " !\"#$%&'()*+´-./:;<=>?@[\\]^_`{|}~";
+        String numeros = "0123456789";
+        for (int i = 0; i < listaconjuntos.length; i++) {
+            var rango = listaconjuntos[i].rango.trim();
+            var rarray = rango.toCharArray();
+            if (rango.length() == 3 && (rarray[1] == '-' || rarray[1] == '~')) {
+                if (letrasmin.indexOf(rarray[0]) != -1 && letrasmin.indexOf(rarray[2]) != -1) {
+                    var limiteinf = letrasmin.indexOf(rarray[0]);
+                    var limitesup = letrasmin.indexOf(rarray[2]);
+                    String rangof = "";
+                    if (limitesup > limiteinf) {
+                        var lista = letrasmin.toCharArray();
+                        for (int j = 0; j < letrasmin.length(); j++) {
+                            if (j >= limiteinf && j <= limitesup) {
+                                rangof = rangof + lista[j];
+                            }
+                        }
+                        listaconjuntos[i].rango = rangof;
+                    } else {
+                        listaconjuntos[i].rango = "-1";
+                        continue;
+                    }
+
+                } else if (letrasmayus.indexOf(rarray[0]) != -1 && letrasmayus.indexOf(rarray[2]) != -1) {
+                    var limiteinf = letrasmayus.indexOf(rarray[0]);
+                    var limitesup = letrasmayus.indexOf(rarray[2]);
+                    String rangof = "";
+                    if (limitesup > limiteinf) {
+                        var lista = letrasmayus.toCharArray();
+                        for (int j = 0; j < letrasmayus.length(); j++) {
+                            if (j >= limiteinf && j <= limitesup) {
+                                rangof = rangof + lista[j];
+                            }
+                        }
+                        listaconjuntos[i].rango = rangof;
+                    } else {
+                        listaconjuntos[i].rango = "-1";
+                        continue;
+                    }
+                } else if (chars.indexOf(rarray[0]) != -1 && chars.indexOf(rarray[2]) != -1) {
+                    var limiteinf = chars.indexOf(rarray[0]);
+                    var limitesup = chars.indexOf(rarray[2]);
+                    String rangof = "";
+                    if (limitesup > limiteinf) {
+                        var lista = chars.toCharArray();
+                        for (int j = 0; j < chars.length(); j++) {
+                            if (j >= limiteinf && j <= limitesup) {
+                                rangof = rangof + lista[j];
+                            }
+                        }
+                        listaconjuntos[i].rango = rangof;
+                    } else {
+                        listaconjuntos[i].rango = "-1";
+                        continue;
+                    }
+                } else if (numeros.indexOf(rarray[0]) != -1 && numeros.indexOf(rarray[2]) != -1) {
+                    var limiteinf = numeros.indexOf(rarray[0]);
+                    var limitesup = numeros.indexOf(rarray[2]);
+                    String rangof = "";
+                    if (limitesup > limiteinf) {
+                        var lista = numeros.toCharArray();
+                        for (int j = 0; j < numeros.length(); j++) {
+                            if (j >= limiteinf && j <= limitesup) {
+                                rangof = rangof + lista[j];
+                            }
+                        }
+                        listaconjuntos[i].rango = rangof;
+                    } else {
+                        listaconjuntos[i].rango = "-1";
+                        continue;
+                    }
+                } else {
+                    listaconjuntos[i].rango = "-1";
+                    continue;
+                }
+            } else {
+                var serie = rango.replaceAll(",", "");
+                listaconjuntos[i].rango = serie;
+            }
+        }
+    }
+
+    private void dividirExpresion() {        
+        // SE VERIFICA SI LOS TITULOS UTILIZADOS EXISTEN, SINO SE ELIMINA LA EXPRESION
+        for (int i = 0; i < listaexpresiones.length; i++) {
+            ArrayList<String> titulosexp = new ArrayList<>();
+            var expresion = listaexpresiones[i].exp;
+            var arrayexp = expresion.toCharArray();
+            var titulos = "";
+            boolean title = false;
+            for (int j = 0; j < arrayexp.length; j++) {
+                if (arrayexp[j] == '{') {
+                    title = true;
+                } else if (arrayexp[j] == '}') {
+                    title = false;
+                    titulosexp.add(titulos);
+                    titulos = "";
+                }
+                if (title && arrayexp[j] != '{') {
+                    titulos = titulos + arrayexp[j];
+                }
+            }
+            for (int j = 0; j < titulosexp.size(); j++) {
+                boolean goodconj = false;
+                for (int w = 0; w < listaconjuntos.length; w++) {
+                    if (titulosexp.get(j).equals(listaconjuntos[w].titulo)) {
+                        goodconj = true;
+                        continue;
+                    }
+                }
+                if (!goodconj) {
+                    listaexpresiones[i].exp = "-1";
+                    break;
+                }
+            }
+
+        }
+        String divisores = ".|*?+";
+        for (int i = 0; i < listaexpresiones.length; i++) {
+            var expresion = listaexpresiones[i].exp;
+            var arrayexp = expresion.toCharArray();
+            var nuevaexp = "";
+            for (int j = 0; j < arrayexp.length; j++){
+                if((divisores.indexOf(arrayexp[j]) != -1) && j == 0){
+                    nuevaexp = nuevaexp + arrayexp[j] + ",";
+                }
+                else if(divisores.indexOf(arrayexp[j]) != -1){
+                    if(divisores.indexOf(arrayexp[j-1]) == -1){
+                        nuevaexp = nuevaexp + "," + arrayexp[j] + ",";
+                    }
+                    else{
+                        nuevaexp = nuevaexp + arrayexp[j] + ",";
+                    }
+                }
+                else if(arrayexp[j] == '}'){
+                    nuevaexp = nuevaexp + arrayexp[j] + ",";
+                }
+                else{                    
+                    nuevaexp = nuevaexp + arrayexp[j];
+                }
+            }
+            listaexpresiones[i].exp = nuevaexp;
+        }
+    }
     private void mostrarlistas(){
         System.out.println("----CONJUNTOS----");
         for (int i = 0; i < listaconjuntos.length; i++) {
