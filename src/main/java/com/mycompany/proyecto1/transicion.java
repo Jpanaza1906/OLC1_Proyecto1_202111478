@@ -23,6 +23,16 @@ public class transicion {
     }
     
     public String graph(){
-        return this.initialState +  "->"  + this.finalState + "[label=\"" + this.transition + "\"]";
+        var letra = this.transition;
+        var arrayletra = letra.toCharArray();
+        if(arrayletra[0] == '\"'){
+            return this.initialState +  "->"  + this.finalState + "[label=\"\\" + arrayletra[0] + arrayletra[1] + "\\" + arrayletra[2] + "\"]";
+        }
+        else if(arrayletra[0] == '\\'){
+            return this.initialState +  "->"  + this.finalState + "[label=\"\\" + this.transition + "\"]";
+        }
+        else{
+            return this.initialState +  "->"  + this.finalState + "[label=\"" + this.transition + "\"]";
+        }
     }
 }

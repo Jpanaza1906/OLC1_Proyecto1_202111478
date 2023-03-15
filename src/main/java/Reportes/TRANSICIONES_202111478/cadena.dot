@@ -1,0 +1,51 @@
+digraph G { 
+ node[shape=none fontname=Helvetica]
+n1[label = < 
+ <table><tr><td rowspan="2">Estado</td><td colspan="6">Terminales</td></tr>
+<tr>
+<td>\'</td>
+<td>\n</td>
+<td>minus</td>
+<td>mayus</td>
+<td>digito</td>
+<td>" "</td>
+</tr>
+<tr>
+<td>S0 [0]</td>
+<td>S1</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+</tr>
+<tr>
+<td>S1 [1, 2, 3, 4, 5]</td>
+<td>--</td>
+<td>S2</td>
+<td>S2</td>
+<td>S2</td>
+<td>S2</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>S2 [1, 2, 3, 4, 5, 6]</td>
+<td>S3</td>
+<td>S2</td>
+<td>S2</td>
+<td>S2</td>
+<td>S2</td>
+<td>S2</td>
+</tr>
+<tr>
+<td>S3 [7]</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+</tr>
+</table>
+>]
+}

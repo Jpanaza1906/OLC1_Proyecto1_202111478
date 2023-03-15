@@ -12,7 +12,7 @@ public class node {
     String lexeme;
     Types type;
     int number;
-    
+    int id;
     boolean accept;
     
     Object left;
@@ -21,7 +21,7 @@ public class node {
     ArrayList<node> leaves;
     ArrayList<ArrayList> table;
     
-    public node(String lexeme, Types type, int number, Object left, Object right, ArrayList<node> leaves, ArrayList<ArrayList> table) {
+    public node(String lexeme, Types type, int number,int id, Object left, Object right, ArrayList<node> leaves, ArrayList<ArrayList> table) {
         first = new ArrayList();
         last = new ArrayList();
         anullable = true;
@@ -29,7 +29,7 @@ public class node {
         this.lexeme = lexeme;
         this.type = type;
         this.number = number;
-        
+        this.id = id;
         accept = "#".equals(this.lexeme);
         
         this.left = left;
@@ -139,5 +139,4 @@ public class node {
         
         return this;
     }
-    
 }

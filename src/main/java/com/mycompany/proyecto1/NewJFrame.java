@@ -40,6 +40,7 @@ public class NewJFrame extends javax.swing.JFrame {
     public NewJFrame() {
         initComponents();
         jLabel2.setText("");
+        jLabel4.setText("");
         jButton2.setEnabled(false);
         jButton4.setEnabled(false); 
         jButton5.setEnabled(false);
@@ -69,6 +70,9 @@ public class NewJFrame extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -195,6 +199,13 @@ public class NewJFrame extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel3.setText("CONSOLA");
 
+        jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ARBOLES", "SIGUIENTES", "TRANSICIONES", "AFD", "AFND", "ERRORES", "SALIDAS" }));
+
+        jLabel4.setText("jLabel4");
+
+        jComboBox2.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -202,35 +213,59 @@ public class NewJFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 783, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(243, 243, 243))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(168, 168, 168)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 490, Short.MAX_VALUE))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(106, 106, 106)
+                        .addComponent(jLabel4)
+                        .addGap(91, 91, 91)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
         );
+
+        pack();
         //      CONSOLA AREA TEXT
         //Redirijo los println
         try {
-                System.setOut(new PrintStream(new FileOutputStream("out.log"), true) {
-                        public synchronized void println(String s) {
-                                if ((s != null) && (s.length() > 0)) {
-                                        jTextArea2.setText(jTextArea2.getText() + " " + s + "\n");
-                                }
-                        }
-                });
+            System.setOut(new PrintStream(new FileOutputStream("out.log"), true) {
+                    public synchronized void println(String s) {
+                            if ((s != null) && (s.length() > 0)) {
+                                    jTextArea2.setText(jTextArea2.getText() + " " + s + "\n");
+                            }
+                    }
+            });
         } catch (FileNotFoundException e) {
                 //  Auto-generated catch block
                 e.printStackTrace();
@@ -251,8 +286,6 @@ public class NewJFrame extends javax.swing.JFrame {
         }
 
         // TERMINA CONSOLA AREA TEXT
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -283,11 +316,10 @@ public class NewJFrame extends javax.swing.JFrame {
             dividirExpresion();
             for (int i = 0; i < listaexpresiones.length;i++){
                 if (!listaexpresiones[i].exp.equals("-1")){
-                    crearArboles(listaexpresiones[i].exp);
+                    crearArboles(listaexpresiones[i].titulo,listaexpresiones[i].exp);
                 }
             }
             mostrarlistas();
-            
         } catch (Exception ex) {
             Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error fatal en compilacion de entrada");
@@ -420,42 +452,30 @@ public class NewJFrame extends javax.swing.JFrame {
             var arrayexp = expresion.toCharArray();
             var nuevaexp = "";
             for (int j = 0; j < arrayexp.length; j++){
-                if((divisores.indexOf(arrayexp[j]) != -1) && j == 0){
+                if(divisores.indexOf(arrayexp[j]) != -1 ){
                     nuevaexp = nuevaexp + arrayexp[j] + ",";
                 }
-                else if(divisores.indexOf(arrayexp[j]) != -1){
-                    if(divisores.indexOf(arrayexp[j-1]) == -1 && arrayexp[j-1] != '}' && arrayexp[j-1] != 'n' && arrayexp[j-1] != '\''){
-                        nuevaexp = nuevaexp + "," + arrayexp[j] + ",";
-                    }
-                    else{
-                        nuevaexp = nuevaexp + arrayexp[j] + ",";
-                    }
-                }
-                else if(arrayexp[j] == '}'){
-                    if((j+1) != arrayexp.length){
-                        nuevaexp = nuevaexp + ",";
-                    }
-                }
-                else{           
-                    if(arrayexp[j] != '{'){      
-                        if(arrayexp[j] == '\"' && arrayexp[j-1] == '\"' && j != (arrayexp.length-1)){
-                            nuevaexp = nuevaexp + " " + ",";
-                        }
-                        else if(arrayexp[j] == '\"' && arrayexp[j-1] == '\"' && j == (arrayexp.length-1)){
-                            nuevaexp = nuevaexp + " ";
-                        }
-                        else if(arrayexp[j] == '\\' && (j+1) != (arrayexp.length-1)){
-                            nuevaexp = nuevaexp + arrayexp[j] + arrayexp[j+1] + ",";
-                            j = j + 1;
-                        }
-                        else if(arrayexp[j] == '\\' && (j+1) == (arrayexp.length-1)){
-                            nuevaexp = nuevaexp + arrayexp[j] + arrayexp[j+1];
+                else{                    
+                    if(arrayexp[j] == '\"'){
+                        if(arrayexp[j+1] == '\"'){
+                            nuevaexp = nuevaexp + arrayexp[j]+ " " + arrayexp[j+1] + ",";
                             j = j + 1;
                         }
                         else{
-                            if(arrayexp[j] != '\"'){
-                                nuevaexp = nuevaexp + arrayexp[j];
-                            }
+                            nuevaexp = nuevaexp + arrayexp[j] + arrayexp[j+1] + arrayexp[j+2] + ",";
+                            j = j + 2;
+                        }
+                    }
+                    else if(arrayexp[j] == '\\'){
+                        nuevaexp = nuevaexp + arrayexp[j] + arrayexp[j+1] + ",";
+                        j = j + 1;
+                    }
+                    else if(arrayexp[j] == '}'){
+                        nuevaexp = nuevaexp + ",";
+                    }
+                    else{
+                        if(arrayexp[j] != '{'){
+                            nuevaexp = nuevaexp + arrayexp[j];
                         }
                     }
                 }
@@ -463,10 +483,10 @@ public class NewJFrame extends javax.swing.JFrame {
             listaexpresiones[i].exp = nuevaexp;
         }
     }
-    private void crearArboles(String er){
+    private void crearArboles(String titulo,String er){
         ArrayList<node> leaves = new ArrayList();
         ArrayList<ArrayList> table = new ArrayList();
-        er = ".," + er + ",#";
+        er = ".," + er + "#";
 
         Tree arbol = new Tree(er, leaves, table);
         node raiz = arbol.getRoot();
@@ -474,14 +494,14 @@ public class NewJFrame extends javax.swing.JFrame {
         raiz.getNode();
         raiz.follow();
         
-        System.out.println("******************************** TABLA SIGUIENTE ***********************************");
-        followTable ft = new followTable();
-        ft.printTable(table);
+        arbol.GraficarArbol(titulo); // GRAFICAR ARBOLES
+
+        followTable ft = new followTable();        
+        ft.printTable(table, titulo); // GRAFICAR TABLA SIGUIENTES
+
         transitionTable tran = new transitionTable(raiz, table, leaves);
-        System.out.println("******************************** TABLA TRANSICIONES ***********************************");
-        tran.impTable();
-        System.out.println("******************************** GRAPHVIZ ***********************************");
-        tran.impGraph();
+        tran.impTable(titulo); // GRAFICAR TABLA TRANSICIONES
+        tran.impGraph(titulo); // GRAFICAR AUTOMATA
     }
     private void mostrarlistas(){
         System.out.println("----CONJUNTOS----");
@@ -617,9 +637,12 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

@@ -4,8 +4,8 @@ public final class numLeave {
     
     public int content;
 
-    public numLeave(String content) {
-        this.content = clean(content) + 1;
+    public numLeave(Integer content) {
+        this.content = content;
     }
     
     public int getNum(){
