@@ -46,6 +46,7 @@ public class NewJFrame extends javax.swing.JFrame {
     public Sintactico.Conjunto[] listaconjuntos;
     public Sintactico.Expresion[] listaexpresiones;
     public Sintactico.Evaluar[] listaevaluaciones;
+    public ArrayList<ArrayList> estados;
     /* ------------------ */
     public NewJFrame() {
         initComponents();
@@ -348,7 +349,27 @@ public class NewJFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    int contsalida = 0;
+    public class Salida{
+        public String value;
+        public String expresion;
+        public String resul;
 
+        public Salida(String value, String expresion, String resul){
+            this.value = value;
+            this.resul = resul;
+            String xpfinal = "";
+            var xp = expresion.toCharArray();
+            for(int i = 0; i < xp.length; i++){
+                if(xp[i] == '\\' || xp[i] == '\"'){
+                    xpfinal += '\\';
+                }                
+                xpfinal += xp[i];
+            }
+            this.expresion = xpfinal;
+        }
+    }
+    public Salida[] salidas;
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         //  add your handling code here: GENERAR AUTOMATA
         jButton5.setEnabled(true);
@@ -359,8 +380,8 @@ public class NewJFrame extends javax.swing.JFrame {
             // CONVERTIR LAS LISTAS A ARRAYS PARA EL MANEJOR
             listaconjuntos = new Sintactico.Conjunto[sintactico.conj.size()];
             listaexpresiones = new Sintactico.Expresion[sintactico.expr.size()];
-            listaevaluaciones = new Sintactico.Evaluar[sintactico.eval.size()];
-
+            listaevaluaciones = new Sintactico.Evaluar[sintactico.eval.size()];            
+            estados =  new ArrayList<>();
             // PASAR CONJUNTOS
             for (int i = 0; i < listaconjuntos.length; i++) {
                 listaconjuntos[i] = sintactico.conj.get(i);
@@ -375,6 +396,8 @@ public class NewJFrame extends javax.swing.JFrame {
             }
             expandirConjuntos();
             dividirExpresion();
+            salidas = new Salida[listaevaluaciones.length];
+            contsalida = 0;
             for (int i = 0; i < listaexpresiones.length;i++){
                 if (!listaexpresiones[i].exp.equals("-1")){
                     crearArboles(listaexpresiones[i].titulo,listaexpresiones[i].exp);
@@ -386,8 +409,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 jButton6.setEnabled(true);
                 for(int i=0;i<listaexpresiones.length;i++){
                     jComboBox2.addItem(listaexpresiones[i].titulo);
-                }
-                
+                }                
                 jComboBox2.setEnabled(true);
             }
         } catch (Exception ex) {
@@ -560,7 +582,6 @@ public class NewJFrame extends javax.swing.JFrame {
 
         Tree arbol = new Tree(er, leaves, table);
         node raiz = arbol.getRoot();
-
         raiz.getNode();
         raiz.follow();
         
@@ -572,6 +593,7 @@ public class NewJFrame extends javax.swing.JFrame {
         transitionTable tran = new transitionTable(raiz, table, leaves);
         tran.impTable(titulo); // GRAFICAR TABLA TRANSICIONES
         tran.impGraph(titulo); // GRAFICAR AUTOMATA
+        estados.add(tran.states);
     }
     private void mostrarlistas(){
         System.out.println("----CONJUNTOS----");
@@ -590,11 +612,117 @@ public class NewJFrame extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // add your handling code here: ANALIZAR ENTRADA
         
-        
-        //SAnalizadorSintactico.main(entrada);
-        System.out.println("Ejecutando!");
+        for (var evaluacion : listaevaluaciones){
+            for (int i = 0; i < listaexpresiones.length; i++){
+                if(listaexpresiones[i].titulo.equals(evaluacion.titulo) && !listaexpresiones[i].exp.equals("-1")){                   
+                    evaluar(evaluacion.titulo,evaluacion.eval,estados.get(i));
+                }
+            }
+        }
+        crearJson();
     }//GEN-LAST:event_jButton5ActionPerformed
-
+    private void evaluar(String tituloeval,String evaluacion, ArrayList<ArrayList> afd){
+        /* estados: estados disponibles
+        estado[4 posiciones]:
+        - estado[0] = nombre del estado
+        - estado[1] = nodos en el estado
+        - estado[2] = transiciones [initialState - transition(lexema) - finalstate]
+        - estado[3] = aceptacion
+        */
+        var cadachar = evaluacion.toCharArray();
+        int nestado = 0;
+        for(int i = 0; i < cadachar.length; i++){
+            var estado = afd.get(nestado);
+            //Object t = (ArrayList) estado.get(2);
+            //transicion trans = (transicion) t;
+            Boolean goodc = false;
+            for (Object t : (ArrayList) estado.get(2)){
+                transicion trans = (transicion) t;
+                String ntransicion = trans.transition.replaceAll("\"", "");
+                if(ntransicion.length() == 1){
+                    var chartrans = ntransicion.toCharArray();
+                    if(cadachar[i] == chartrans[0]){
+                        goodc = true;
+                    }
+                    else{
+                        continue;
+                    }
+                }
+                else if(ntransicion.length() == 2){
+                    var chartrans = ntransicion.toCharArray();
+                    if(cadachar[i] == chartrans[0] && cadachar[i+1] == chartrans[1]){
+                        i++;
+                        goodc = true;
+                    }
+                    else{
+                        continue;
+                    }
+                }
+                else{
+                    for (var conjunto : listaconjuntos){
+                        if(ntransicion.equals(conjunto.titulo)){
+                            var rango = conjunto.rango;
+                            if(rango.indexOf(cadachar[i]) != -1){
+                                goodc = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                //evaluar la transicion a otro estado
+                if(goodc){
+                    int nume = Integer.parseInt(trans.finalState.replaceAll("S", ""));
+                    nestado = nume;
+                    break;
+                }
+            }
+            if(!goodc){
+                nestado = 0;
+                break;
+            }
+        }
+        var estado = afd.get(nestado);
+        if((boolean) estado.get(3)){
+            System.out.println(tituloeval+" - "+ evaluacion + ": correcta");
+            Salida s = new Salida(tituloeval, evaluacion, "Cadena Valida");
+            salidas[contsalida] = s;
+            contsalida++;
+        }
+        else{
+            System.out.println(tituloeval+" - "+ evaluacion + ": incorrecta");
+            Salida s = new Salida(tituloeval, evaluacion, "Cadena Invalida");
+            salidas[contsalida] = s;
+            contsalida++;
+        }
+    }
+    int conts = 0;
+    private void crearJson(){
+        String ruta = "src/main/java/Reportes/SALIDAS_202111478/salida" + conts + ".json";
+        conts++;
+        String json = "[\n";
+        for (int i = 0; i < salidas.length;i++){
+            json += "\t{\n";
+            json += "\t\t\"Valor\":" + "\"" + salidas[i].value + "\",\n";
+            json += "\t\t\"ExpresionRegular\":" + "\"" + salidas[i].expresion + "\",\n";
+            json += "\t\t\"Resultado\":" + "\"" + salidas[i].resul + "\"\n";
+            json += "\t}";
+            if(i == salidas.length - 1){
+                json += "\n";
+            }
+            else{
+                json += ",\n";
+            }
+        }
+        json += "]";
+        try {
+            FileWriter file = new FileWriter(ruta);
+            file.write(json);
+            file.close();
+        } catch (IOException e) {
+            // Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // VER ARCHIVOS DE LOS COMBOBOX
         String carpeta = jComboBox1.getSelectedItem().toString();

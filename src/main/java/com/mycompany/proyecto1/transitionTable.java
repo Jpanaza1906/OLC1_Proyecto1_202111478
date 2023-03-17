@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class transitionTable {
 
-    public ArrayList<ArrayList> states;
+    public  ArrayList<ArrayList> states;
     public int cont;
     
     public transitionTable(node root, ArrayList tabla, ArrayList<node> leaves) {

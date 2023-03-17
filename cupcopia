@@ -1,0 +1,156 @@
+/* 1. Package e importaciones */
+package Analizadores; 
+import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/* 2. Codigo para el parser, variables, metodos */
+parser code 
+{:
+    //Clases, objetos, variables, lista, etc... en sintaxis java    
+    //donde guardare cada uno de los resultados analizados
+    public class Conjunto {
+        public String titulo;
+        public String rango;
+
+        public Conjunto(String titulo, String rango){
+            this.titulo = titulo;
+            this.rango = rango;
+        }
+    }
+
+    public class Expresion {
+        public String titulo;
+        public String exp;
+
+        public Expresion(String titulo, String exp){
+            this.titulo = titulo;
+            this.exp = exp;
+        }
+    }
+    public class Evaluar {
+        public String titulo;
+        public String eval;
+
+        public Evaluar(String titulo, String eval){
+            this.titulo = titulo;
+            this.eval = eval;
+        }
+    } 
+    public static String xs = "";
+    public List<Conjunto> conj = new ArrayList<Conjunto>();
+    public List<Expresion> expr = new ArrayList<Expresion>();
+    public List<Evaluar> eval = new ArrayList<Evaluar>();
+:} 
+
+/* 3. Terminales */
+terminal String CONJUNTO;
+terminal String GUION, RANGO, MAYORQ, PTCOMA, COMA,DOSPT, PAR_A, PAR_C, COR_A, COR_C, LLAVE_A, LLAVE_C, PORCEN, COMILLA_S, COMILLA_D;
+terminal String CONCAT, OR, CERO_MAS, UNO_MAS, CERO_UNO;
+terminal String TITULO, RANGO_MAYUS, RANGO_MINUS, SLETRAS, SNUMS, RANGO_NUM, RANGO_CHAR, SCHAR, CHAR;
+/* 4. No Terminales */
+non terminal ini;
+non terminal BODY;
+non terminal DEFCONJ;
+non terminal DEFER;
+non terminal TESTER;
+
+non terminal String rango;
+non terminal String expresion;
+non terminal String evaluar;
+/* 5. Precedencias */
+
+/* 6. Producciones */
+
+start with ini;
+ini ::= LLAVE_A BODY LLAVE_C {: System.out.println("Ya salio");:};
+
+BODY ::=  DEFCONJ BODY
+        | DEFCONJ
+        | DEFER BODY
+        | DEFER 
+        | PORCEN PORCEN BODY
+        | TESTER BODY
+        | TESTER
+;
+
+DEFCONJ ::= CONJUNTO DOSPT TITULO:t GUION MAYORQ rango:r PTCOMA 
+    {:
+        r = r.replaceAll(" ","");
+        Conjunto c = new Conjunto(t,r);
+        conj.add(c);
+    :}
+;
+
+rango ::= 
+          RANGO_MAYUS:r   {:RESULT=r;:}
+        | RANGO_MINUS:r   {:RESULT=r;:}
+        | SLETRAS:r       {:RESULT=r;:}
+        | SNUMS:r         {:RESULT=r;:}
+        | RANGO_NUM:r     {:RESULT=r;:}
+        | RANGO_CHAR:r    {:RESULT=r;:}
+        | SCHAR:r         {:RESULT=r;:}
+;
+
+DEFER ::= TITULO:t GUION MAYORQ expresion
+    {:
+        Expresion x = new Expresion(t,xs);
+        expr.add(x);
+        xs = "";
+    :}
+;
+expresion ::= 
+         CONCAT:r expresion       {:xs = r + xs;:} 
+        | OR:r expresion          {:xs = r + xs;:}   
+        | CERO_MAS:r expresion    {:xs = r + xs;:}   
+        | UNO_MAS:r expresion     {:xs = r + xs;:}   
+        | CERO_UNO:r expresion    {:xs = r + xs;:}   
+        | LLAVE_A:r expresion     {:xs = r + xs;:}   
+        | LLAVE_C:r expresion     {:xs = r + xs;:}   
+        | COMILLA_D:r expresion   {:xs = r + xs;:}
+        | COMILLA_S:r expresion   {:xs = r + xs;:}
+        | DOSPT:r expresion       {:xs = r + xs;:}
+        | GUION:r expresion       {:xs = r + xs;:}
+        | RANGO:r expresion       {:xs = r + xs;:}
+        | MAYORQ:r expresion      {:xs = r + xs;:}
+        | COMA:r expresion        {:xs = r + xs;:}
+        | PAR_A:r expresion       {:xs = r + xs;:}
+        | PAR_C:r expresion       {:xs = r + xs;:}
+        | COR_A:r expresion       {:xs = r + xs;:}
+        | COR_C:r expresion       {:xs = r + xs;:}
+        | PORCEN:r expresion     {:xs = r + xs;:}
+        | TITULO:r expresion      {:xs = r + xs;:}
+        | CHAR:r expresion        {:xs = r + xs;:}  
+        | PTCOMA
+;
+
+TESTER ::= TITULO:t DOSPT COMILLA_D evaluar PTCOMA
+    {:
+        Evaluar x = new Evaluar(t,xs);
+        eval.add(x);
+        xs = "";
+    :}
+;
+evaluar ::= 
+         CONCAT:r evaluar       {:xs = r + xs;:} 
+        | OR:r evaluar          {:xs = r + xs;:}   
+        | CERO_MAS:r evaluar    {:xs = r + xs;:}   
+        | UNO_MAS:r evaluar     {:xs = r + xs;:}   
+        | CERO_UNO:r evaluar    {:xs = r + xs;:}   
+        | LLAVE_A:r evaluar     {:xs = r + xs;:}   
+        | LLAVE_C:r evaluar     {:xs = r + xs;:} 
+        | COMILLA_S:r evaluar   {:xs = r + xs;:}
+        | DOSPT:r evaluar       {:xs = r + xs;:}
+        | GUION:r evaluar       {:xs = r + xs;:}
+        | RANGO:r evaluar       {:xs = r + xs;:}
+        | MAYORQ:r evaluar      {:xs = r + xs;:}
+        | COMA:r evaluar        {:xs = r + xs;:}
+        | PAR_A:r evaluar       {:xs = r + xs;:}
+        | PAR_C:r evaluar       {:xs = r + xs;:}
+        | COR_A:r evaluar       {:xs = r + xs;:}
+        | COR_C:r evaluar       {:xs = r + xs;:}
+        | PORCEN:r evaluar      {:xs = r + xs;:}
+        | TITULO:r evaluar      {:xs = r + xs;:}
+        | CHAR:r evaluar        {:xs = r + xs;:}    
+        | COMILLA_D:r           
+;
