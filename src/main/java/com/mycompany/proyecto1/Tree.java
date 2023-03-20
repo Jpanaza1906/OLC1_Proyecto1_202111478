@@ -84,7 +84,9 @@ public class Tree {
     }
     public void GraficarArbol(String titulo){
         String grafica = "digraph G {\n\n node[shape=record] \n\n" + GraficaNodos(this.root) + "\n\n}";
+        String grafica2 = "digraph G {\n rankdir=\"LR\" \n" + GraficaANDF((node)this.root.left) + "\nS" + conts + "[shape = doublecircle]; \n}";        
         crearGraficaArbol(titulo, grafica);
+        crearGraficaAFND(titulo, grafica2);
     }
     private String GraficaNodos(node nodo){        
         String etiqueta = "";
@@ -163,6 +165,113 @@ public class Tree {
         }
         return etiqueta;
     }
+    //GRAFICAR AFND
+    int conts = 0;
+    private String GraficaANDF(node nodo){        
+        String etiqueta = "";
+        var arraylex = nodo.lexeme.toCharArray();
+        if (nodo.left == null && nodo.right == null){
+            if(arraylex[0] == '\\'){
+                etiqueta +=  "[label=\"\\" + nodo.lexeme + "\"]";
+            }
+            else if(arraylex[0] == '\"'){
+                etiqueta +=  "[label=\"\\" + arraylex[0] + arraylex[1] + "\\" + arraylex[2] +"\"]";
+            }
+            else{
+                etiqueta +=  "[label=\"" + nodo.lexeme + "\"]";
+            }
+        }
+        else{
+            if(arraylex[0] == '.'){
+                if(nohijos((node) nodo.left)){
+                    etiqueta += "\nS" + conts + " -> S" + (++conts) + GraficaANDF((node)nodo.left);
+                }
+                else{
+                    etiqueta += GraficaANDF((node) nodo.left);
+                }
+                if(nohijos((node) nodo.right)){
+                    etiqueta += "\nS" + conts + " -> S" + (++conts) + GraficaANDF((node)nodo.right);
+                }
+                else{
+                    etiqueta += GraficaANDF((node) nodo.right);
+                }
+                
+            }
+            else if(arraylex[0] == '|'){   
+                var contor = conts;             
+                etiqueta += "\nS" + contor + " -> S" + (++conts) + "[label=\"e\"]";
+                if(nohijos((node) nodo.left)){
+                    etiqueta += "\nS" + conts + " -> S" + (++conts) + GraficaANDF((node)nodo.left);
+                }
+                else{
+                    etiqueta += GraficaANDF((node) nodo.left);
+                }
+                var contfinal = conts;
+                etiqueta += "\nS" + contor + " -> S" + (++conts) + "[label=\"e\"]";
+                if(nohijos((node) nodo.right)){
+                    etiqueta += "\nS" + conts + " -> S" + (++conts) + GraficaANDF((node)nodo.right);
+                }
+                else{
+                    etiqueta += GraficaANDF((node) nodo.right);
+                }
+                etiqueta += "\nS" + conts + " -> S" + (++conts) + "[label=\"e\"]";
+
+                etiqueta += "\nS" + contfinal + " -> S" + conts + "[label=\"e\"]";
+            }
+            else if(arraylex[0] == '*'){
+                var contcom = conts;
+                etiqueta += "\nS" + contcom + " -> S" + (++conts) + "[label=\"e\"]";
+                var contini = conts;
+                if(nohijos((node) nodo.left)){
+                    etiqueta += "\nS" + conts + " -> S" + (++conts) + GraficaANDF((node)nodo.left);
+                }
+                else{
+                    etiqueta += GraficaANDF((node) nodo.left);
+                }
+                etiqueta += "\nS" + conts + " -> S" + contini + "[label=\"e\"]";
+                etiqueta += "\nS" + conts + " -> S" + (++conts) + "[label=\"e\"]";
+                etiqueta += "\nS" + contcom + " -> S" + conts + "[label=\"e\"]";
+            }
+            else if(arraylex[0] == '+'){
+                etiqueta += "\nS" + conts + " -> S" + (++conts) + "[label=\"e\"]";
+                var contini = conts;
+                if(nohijos((node)nodo.left)){
+                    etiqueta += "\nS" + conts + " -> S" + (++conts) + GraficaANDF((node)nodo.left);
+                }
+                else{
+                    etiqueta += GraficaANDF((node) nodo.left);
+                }
+                etiqueta += "\nS" + conts + " -> S" + contini + "[label=\"e\"]";
+                etiqueta += "\nS" + conts + " -> S" + (++conts) + "[label=\"e\"]";
+            }
+            else if(arraylex[0] == '?'){
+                var contcou = conts;
+                etiqueta += "\nS" + contcou + " -> S" + (++conts) + "[label=\"e\"]";
+                if(nohijos((node)nodo.left)){
+                    etiqueta += "\nS" + conts + " -> S" + (++conts) + GraficaANDF((node) nodo.left);
+                }
+                else{
+                    etiqueta += GraficaANDF((node) nodo.left);
+                }
+                etiqueta += "\nS" + conts + " -> S" + (++conts) + "[label=\"e\"]";
+                etiqueta += "\nS" + contcou + " -> S"+ conts + "[label=\"e\"]";
+            }
+        }
+        return etiqueta;
+    }
+    private Boolean nohijos(node nodo){
+        var nodol = (node) nodo.left;
+        var nodor = (node) nodo.right;
+        if(nodol != null){
+            return false;
+        }
+        else if(nodor != null){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
     private void crearGraficaArbol(String titulo, String grafica){
         FileWriter fichero = null;
         PrintWriter pw = null;
@@ -191,6 +300,54 @@ public class Tree {
             String fileInputPath = "src/main/java/Reportes/ARBOLES_202111478/" + titulo + ".dot";
             //dirección donde se creara la magen
             String fileOutputPath = "src/main/java/Reportes/ARBOLES_202111478/" + titulo + ".jpg";
+            //tipo de conversón
+            String tParam = "-Tjpg";
+            String tOParam = "-o";
+
+            String[] cmd = new String[5];
+            cmd[0] = dotPath;
+            cmd[1] = tParam;
+            cmd[2] = fileInputPath;
+            cmd[3] = tOParam;
+            cmd[4] = fileOutputPath;
+
+            Runtime rt = Runtime.getRuntime();
+
+            rt.exec(cmd);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+        }
+    }
+    private void crearGraficaAFND(String titulo, String grafica){
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter("src/main/java/Reportes/AFND_202111478/" + titulo + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println(grafica);
+        } catch (Exception e) {
+            System.out.println("error, no se realizo el archivo"+e);
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                    System.out.println("METODO DEL ARBOL GENERADO CORRECTAMENTE");
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        //para compilar el archivo dot y obtener la imagen
+        try {
+            //"C:\\Program Files\\Graphviz\\bin\\dot.exe"
+            //dirección doonde se ecnuentra el compilador de graphviz
+            String dotPath = "C:\\Program Files\\Graphviz\\bin\\dot.exe";
+            //dirección del archivo dot
+            String fileInputPath = "src/main/java/Reportes/AFND_202111478/" + titulo + ".dot";
+            //dirección donde se creara la magen
+            String fileOutputPath = "src/main/java/Reportes/AFND_202111478/" + titulo + ".jpg";
             //tipo de conversón
             String tParam = "-Tjpg";
             String tOParam = "-o";

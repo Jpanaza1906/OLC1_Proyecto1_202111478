@@ -1,0 +1,73 @@
+ini := "{" BODY "}"
+
+BODY :=  DEFCONJ BODY
+        | DEFCONJ
+        | DEFER BODY
+        | DEFER 
+        | "%" "%" BODY
+        | TESTER BODY
+        | TESTER
+
+DEFCONJ := CONJUNTO ":" TITULO "-" ">" "~" ";"
+
+"~" := 
+          "~"_MAYUS   
+        | "~"_MINUS   
+        | SLETRAS       
+        | SNUMS         
+        | "~"_NUM     
+        | "~"_CHAR    
+        | SCHAR         
+
+
+DEFER := TITULO:t "-" ">" expresion;
+expresion := 
+         "." expresion        
+        | "|" expresion             
+        | "*" expresion       
+        | "+" expresion        
+        | "?" expresion       
+        | "{" expresion        
+        | "}" expresion        
+        | "\"" expresion   
+        | "'" expresion   
+        | ":" expresion       
+        | "-" expresion       
+        | "~" expresion       
+        | ">" expresion      
+        | "," expresion        
+        | "(" expresion       
+        | ")" expresion       
+        | "[" expresion       
+        | "]" expresion       
+        | "%" expresion     
+        | TITULO expresion      
+        | CHAR expresion          
+        | ";"
+
+
+TESTER := TITULO:t ":" "\"" evaluar ";"
+
+evaluar := 
+         "." evaluar        
+        | "|" evaluar             
+        | "*" evaluar       
+        | "+" evaluar        
+        | "?" evaluar       
+        | "{" evaluar        
+        | "}" evaluar      
+        | "'" evaluar   
+        | ":" evaluar       
+        | "-" evaluar       
+        | "~" evaluar       
+        | ">" evaluar      
+        | "," evaluar        
+        | "(" evaluar       
+        | ")" evaluar       
+        | "[" evaluar       
+        | "]" evaluar       
+        | "%" evaluar      
+        | TITULO evaluar      
+        | CHAR evaluar            
+        | "\""           
+;

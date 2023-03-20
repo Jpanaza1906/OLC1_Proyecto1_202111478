@@ -77,7 +77,6 @@ schar = {char}{BLANCOS}*(","){BLANCOS}*({char}(",")?{BLANCOS}*)*
 \n {yychar=1;}
 
 //Expresiones definidas
-
 {BLANCOS} {/*ignore*/} 
 {comentariosimple} {/*ignore*/}
 {multicomentario} {/*ignore*/}
