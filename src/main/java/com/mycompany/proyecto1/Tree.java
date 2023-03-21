@@ -333,7 +333,7 @@ public class Tree {
             try {
                 if (null != fichero) {
                     fichero.close();
-                    System.out.println("METODO DEL ARBOL GENERADO CORRECTAMENTE");
+                    System.out.println("AUTOMATA FINITO NO DETERMINISTA GENERADO CORRECTAMENTE");
                 }
             } catch (Exception e2) {
                 e2.printStackTrace();

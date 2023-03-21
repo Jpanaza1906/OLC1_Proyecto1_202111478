@@ -1,0 +1,12 @@
+[
+	{
+		"Valor":"cadena",
+		"ExpresionRegular":"\\'cadenaentrecomillasimple\\'",
+		"Resultado":"Cadena Valida"
+	},
+	{
+		"Valor":"frase",
+		"ExpresionRegular":"COMPI1salecon100",
+		"Resultado":"Cadena Valida"
+	}
+]
